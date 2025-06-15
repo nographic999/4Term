@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4Term", "4Term.csproj", "{64795BED-858D-4011-9789-09290A40D0DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DEBUG|X86-64 = DEBUG|X86-64
+		RELEASE|X86-64 = RELEASE|X86-64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64795BED-858D-4011-9789-09290A40D0DD}.DEBUG|X86-64.ActiveCfg = DEBUG|X86-64
+		{64795BED-858D-4011-9789-09290A40D0DD}.DEBUG|X86-64.Build.0 = DEBUG|X86-64
+		{64795BED-858D-4011-9789-09290A40D0DD}.RELEASE|X86-64.ActiveCfg = RELEASE|X86-64
+		{64795BED-858D-4011-9789-09290A40D0DD}.RELEASE|X86-64.Build.0 = RELEASE|X86-64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
