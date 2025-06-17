@@ -6,6 +6,21 @@ All notable changes to **4Term** will be documented in this file.
 
 ### Added
  - Initial release of **4Term**
+
+## [1.1.0] - 2025-06-17
+
+### Added
+ - DTR and RTS control in the menu strip
+ - Auto macro sending feature
+ 
+### Changed
+ - Main form layout and design
+ - Serial options form 
+ - Settings form
+ - Macro set styling
+ - XML file handling
+ - Serial port handling
+ - Settings handling
  
 ## License
 

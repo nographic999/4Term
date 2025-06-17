@@ -12,7 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DEBUG|X86-64'">
     <DebugSymbols>true</DebugSymbols>
     <IntermediateOutputPath>obj\debug</IntermediateOutputPath>
@@ -24,7 +24,6 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'RELEASE|X86-64'">
     <IntermediateOutputPath>obj\release</IntermediateOutputPath>
     <OutputPath>bin\release</OutputPath>
@@ -38,8 +37,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-  </PropertyGroup> 
-  <ItemGroup>  
+  </PropertyGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.CodeDom, Version=9.0.0.6, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.CodeDom.9.0.6\lib\net462\System.CodeDom.dll</HintPath>
@@ -87,11 +86,11 @@
     </Compile>
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Serial.cs" />
-    <Compile Include="src\forms\SerialSettings_Form.cs">
+    <Compile Include="src\forms\SerialOptions_Form.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="src\forms\SerialSettings_Form.Designer.cs">
-      <DependentUpon>SerialSettings_Form.cs</DependentUpon>
+    <Compile Include="src\forms\SerialOptions_Form.Designer.cs">
+      <DependentUpon>SerialOptions_Form.cs</DependentUpon>
     </Compile>
     <Compile Include="src\forms\Settings_Form.cs">
       <SubType>Form</SubType>
@@ -100,6 +99,7 @@
       <DependentUpon>Settings_Form.cs</DependentUpon>
     </Compile>
     <Compile Include="src\Settings.cs" />
+    <Compile Include="src\Xml.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="src\forms\About_Form.resx">
@@ -108,8 +108,8 @@
     <EmbeddedResource Include="src\forms\Main_Form.resx">
       <DependentUpon>Main_Form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\forms\SerialSettings_Form.resx">
-      <DependentUpon>SerialSettings_Form.cs</DependentUpon>
+    <EmbeddedResource Include="src\forms\SerialOptions_Form.resx">
+      <DependentUpon>SerialOptions_Form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\forms\Settings_Form.resx">
       <DependentUpon>Settings_Form.cs</DependentUpon>

@@ -117,8 +117,9 @@ namespace _4Term
                     "SELECT Caption, DeviceID FROM Win32_PnPEntity WHERE Caption LIKE '%(COM%'"))
                 {
                     /* Execute query and process results */
-                    foreach (ManagementObject obj in searcher.Get())
+                    foreach (ManagementBaseObject baseObj in searcher.Get())
                     {
+                        ManagementObject obj = (ManagementObject)baseObj;
                         /* Get the device caption (description) and ID */
                         string caption = obj["Caption"]?.ToString();
                         string deviceId = obj["DeviceID"]?.ToString();
@@ -439,9 +440,9 @@ namespace _4Term
                 }
 
                 /* Validate config file existence */
-                if (!File.Exists(Settings.XmlName))
+                if (!File.Exists(Xml.FileNameq))
                 {
-                    MessageBox.Show($"Configuration file not found: {Settings.XmlName}",
+                    MessageBox.Show($"Configuration file not found: {Xml.FileNameq}",
                                   "File Missing",
                                   MessageBoxButtons.OK,
                                   MessageBoxIcon.Warning);
@@ -449,7 +450,7 @@ namespace _4Term
                 }
 
                 /* Check file size(limit to 1MB for XML) */
-                FileInfo configFile = new FileInfo(Settings.XmlName);
+                FileInfo configFile = new FileInfo(Xml.FileNameq);
                 if (configFile.Length > 1024 * 1024)  // 1MB limit
                 {
                     MessageBox.Show("Configuration file exceeds maximum size (1MB)",
@@ -463,8 +464,8 @@ namespace _4Term
                 RichTextBox.Clear();
 
                 /* Read with explicit UTF-8 encoding and error handling */
-                RichTextBox.Text = File.ReadAllText(Settings.XmlName, Encoding.UTF8);
-                FilePath = Settings.XmlName;
+                RichTextBox.Text = File.ReadAllText(Xml.FileNameq, Encoding.UTF8);
+                FilePath = Xml.FileNameq;
             }
             catch (Exception ex)
             {
@@ -623,6 +624,7 @@ namespace _4Term
         {
             Settings_Form SettingsForm = new Settings_Form();
             SettingsForm.ShowDialog();
+            SetAdvancedMode(Settings.RichTextBox.AdvancedMode);
         }
 
         /*----------------------------------------------------------
@@ -660,20 +662,10 @@ namespace _4Term
          *---------------------------------------------------------*/
         private void MacroModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MacroModeToolStripMenuItem.Checked = !MacroModeToolStripMenuItem.Checked;
             MacroEditingFlag = !MacroEditingFlag;
-            ReturnButton.Enabled = ReturnButton.Visible = ProgButton.Enabled = 
-                ProgButton.Visible = MacroBox.Enabled = MacroBox.Visible =
-                MacroTextBox.Enabled = MacroTextBox.Visible = MacroLabel.Enabled = MacroLabel.Visible =
-                MacroTextLabel.Enabled = MacroTextLabel.Visible = TabLabel.Enabled = TabLabel.Visible =
-                TabBox.Enabled = TabBox.Visible = labelinfo.Enabled = labelinfo.Visible = MacroEditingFlag;
-            ComboBox.Enabled = ComboBox.Visible = SendButton.Enabled = SendButton.Visible =
-               ClearButton.Enabled = ClearButton.Visible = SettingsButton.Enabled = SettingsButton.Visible =
-               AutoConnectButton.Enabled = AutoConnectButton.Visible = ConnectButton.Enabled = ConnectButton.Visible =
-               RichTextBox.Visible = PasteToolStripMenuItem.Enabled = CopyToolStripMenuItem.Enabled = CutToolStripMenuItem.Enabled =
-               groupBox1.Enabled = groupBox1.Visible = COMBox.Enabled = COMBox.Visible = !MacroEditingFlag;
+            SetMacroSetMode(MacroEditingFlag);
         }
-
+/*
         private void MacroRepeatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (MacroRepeatTimer.Enabled)
@@ -688,7 +680,7 @@ namespace _4Term
                 RichTextBox.SelectionColor = Color.IndianRed;
                 RichTextBox.AppendText("Press any macro button to repeat\n");
             }
-        }
+        }*/
 
         /*----------------------------------------------------------
          * MenuStrip - Help
@@ -709,5 +701,247 @@ namespace _4Term
             About_Form AboutForm = new About_Form();
             AboutForm.ShowDialog();
         }
+
+        private void M1SetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!M2Flag && !M3Flag && !M4Flag && !M5Flag)
+            {
+                M1ToolStripMenuItem.BackColor = Color.Yellow;
+                M1Flag = true;
+                InfoMessage("Please Select macro\n");
+            }
+        }
+
+        private void M2SetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!M1Flag && !M3Flag && !M4Flag && !M5Flag)
+            {
+                M2ToolStripMenuItem.BackColor = Color.Yellow;
+                M2Flag = true;
+                InfoMessage("Please Select macro\n");
+            }
+        }
+
+        private void M3SetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!M1Flag && !M2Flag && !M4Flag && !M5Flag)
+            {
+                M3ToolStripMenuItem.BackColor = Color.Yellow;
+                M3Flag = true;
+                InfoMessage("Please Select macro\n");
+            }
+        }
+
+        private void M4SetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!M1Flag && !M2Flag && !M3Flag && !M5Flag)
+            {
+                M4ToolStripMenuItem.BackColor = Color.Yellow;
+                M4Flag = true;
+                InfoMessage("Please Select macro\n");
+            
+      
+            }
+        }
+
+        private void M5SetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!M1Flag && !M2Flag && !M3Flag && !M4Flag)
+            {
+                M5ToolStripMenuItem.BackColor = Color.Yellow;
+                M5Flag = true;
+                InfoMessage("Please Select macro\n");
+            }
+        }
+
+        private void AdvancedModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AdvancedModeToolStripMenuItem.Checked = !AdvancedModeToolStripMenuItem.Checked;
+            SetAdvancedMode(AdvancedModeToolStripMenuItem.Checked);
+            Settings.WriteXml();
+        }
+
+        private void M1ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (Port.IsOpen && (CurrentM1Repeat != -1))
+                {
+                    if (!M1Timer.Enabled)
+                    {
+
+                        if (int.TryParse(M1ToolStripTextBox.Text, out int interval) && interval > 0)
+                        {
+                            
+                            M1Timer.Interval = interval;
+                            M1Timer.Enabled = true;
+                        }
+                        else
+                        {
+                            RichTextBox.SelectionColor = Color.IndianRed;
+                            RichTextBox.AppendText("Please enter a valid positive number.\n");
+                        }
+                    }
+                    else
+                    {
+                        M1Timer.Enabled = false;
+                        M1ToolStripMenuItem.BackColor = SystemColors.Control;
+                    }
+                }
+                else
+                    RichTextBox.AppendText("COM port is not open.\n");
+            }
+        }
+
+        private void M2ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (Port.IsOpen && (CurrentM2Repeat != -1))
+                {
+                    if (!M2Timer.Enabled)
+                    {
+
+                        if (int.TryParse(M2ToolStripTextBox.Text, out int interval) && interval > 0)
+                        {
+                            M2ToolStripMenuItem.BackColor = Color.Green;
+                            M2Timer.Interval = interval;
+                            M2Timer.Enabled = true;
+                        }
+                        else
+                        {
+                            RichTextBox.SelectionColor = Color.IndianRed;
+                            RichTextBox.AppendText("Please enter a valid positive number.\n");
+                        }
+                    }
+                    else
+                    {
+                        M2Timer.Enabled = false;
+                        M2ToolStripMenuItem.BackColor = SystemColors.Control;
+                    }
+                }
+                else
+                    RichTextBox.AppendText("COM port is not open.\n");
+            }
+        }
+
+        private void M3ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (Port.IsOpen && (CurrentM3Repeat != -1))
+                {
+                    if (!M3Timer.Enabled)
+                    {
+
+                        if (int.TryParse(M3ToolStripTextBox.Text, out int interval) && interval > 0)
+                        {
+                            M3ToolStripMenuItem.BackColor = Color.Green;
+                            M3Timer.Interval = interval;
+                            M3Timer.Enabled = true;
+                        }
+                        else
+                        {
+                            RichTextBox.SelectionColor = Color.IndianRed;
+                            RichTextBox.AppendText("Please enter a valid positive number.\n");
+                        }
+                    }
+                    else
+                    {
+                        M3Timer.Enabled = false;
+                        M3ToolStripMenuItem.BackColor = SystemColors.Control;
+                    }
+                }
+                else
+                    RichTextBox.AppendText("COM port is not open.\n");
+            }
+        }
+
+        private void M4ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (Port.IsOpen && (CurrentM4Repeat != -1))
+                {
+                    if (!M4Timer.Enabled)
+                    {
+                        if (int.TryParse(M4ToolStripTextBox.Text, out int interval) && interval > 0)
+                        {
+                            M4ToolStripMenuItem.BackColor = Color.Green;
+                            M4Timer.Interval = interval;
+                            M4Timer.Enabled = true;
+                        }
+                        else
+                        {
+                            RichTextBox.SelectionColor = Color.IndianRed;
+                            RichTextBox.AppendText("Please enter a valid positive number.\n");
+                        }
+                    }
+                    else
+                    {
+                        M4Timer.Enabled = false;
+                        M4ToolStripMenuItem.BackColor = SystemColors.Control;
+                    }
+                }
+                else
+                    RichTextBox.AppendText("COM port is not open.\n");
+            }
+        }
+
+        private void M5ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (Port.IsOpen && (CurrentM5Repeat != -1))
+                {
+                    if (!M5Timer.Enabled)
+                    {
+                        if (int.TryParse(M5ToolStripTextBox.Text, out int interval) && interval > 0)
+                        {
+                            M5ToolStripMenuItem.BackColor = Color.Green;
+                            M5Timer.Interval = interval;
+                            M5Timer.Enabled = true;
+                        }
+                        else
+                        {
+                            RichTextBox.SelectionColor = Color.IndianRed;
+                            RichTextBox.AppendText("Please enter a valid positive number.\n");
+                        }
+                    }
+                    else
+                    {
+                        M5Timer.Enabled = false;
+                        M5ToolStripMenuItem.BackColor = SystemColors.Control;
+                    }
+                }
+                else
+                    RichTextBox.AppendText("COM port is not open.\n");
+            }
+        }
+
+        private void DtrToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                Settings.Port.Dtr = !Settings.Port.Dtr;
+                DtrToolStripMenuItem.BackColor = Settings.Port.Dtr ? Color.Green : SystemColors.Control;
+                if (Serial.Instance.IsOpen)
+                    Serial.Instance.SetDtr(Settings.Port.Dtr);
+                Settings.WriteXml();
+            }
+        }
+
+        private void RtsToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                Settings.Port.Rts = !Settings.Port.Rts;
+                RtsToolStripMenuItem.BackColor = Settings.Port.Rts ? Color.Green : SystemColors.Control;
+                if (Serial.Instance.IsOpen)
+                    Serial.Instance.SetRts(Settings.Port.Rts);
+                Settings.WriteXml();
+            }
+        }
+
     }
 }

@@ -1,55 +1,53 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace _4Term
 {
     public partial class Settings_Form : Form
     {
+        /*----------------------------------------------------------
+         * Class Functions
+         * ---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         *
+         * [✓] Settings_Form (Constructor)
+         * [✓] SaveSettingsButton_Click
+         * [✓]
+         * [✓] WndProc
+         *---------------------------------------------------------*/
+
+        /*----------------------------------------------------------
+         * SerialPortOptionsForm (Constructor)
+         * 
+         * Initializes serial port configuration form components:
+         *---------------------------------------------------------*/
         public Settings_Form()
         {
             InitializeComponent();
-            switch (Settings.Port.AppendToSend)
-            {
-                case Settings.Port.AppendType.AppendNothing:
-                    NoneRadioButton.Checked = true;
-                    break;
-                case Settings.Port.AppendType.AppendCR:
-                    CRRadioButton.Checked = true;
-                    break;
-                case Settings.Port.AppendType.AppendLF:
-                    LFRadioButton.Checked = true;
-                    break;
-                case Settings.Port.AppendType.AppendCRLF:
-                    radioButton4.Checked = true;
-                    break;
-            }
-            FormWidthTextBox.Text = Settings.Form.Width.ToString();
+
+                        FormWidthTextBox.Text = Settings.Form.Width.ToString();
             FormHeightTextBox.Text = Settings.Form.Height.ToString();
             WordWrapCheckBox.Checked = Settings.RichTextBox.WordWrap;
             ToggleScrollingCheckBox.Checked = Settings.RichTextBox.Scroll;
             HexOutputCheckBox.Checked = Settings.RichTextBox.HexOutput;
-            LocalEchoCheckBox.Checked = Settings.RichTextBox.LocalEcho;                 
+            LocalEchoCheckBox.Checked = Settings.RichTextBox.LocalEcho;
+            AdvancedModeCheckBox.Checked = Settings.RichTextBox.AdvancedMode;
         }
         
-        private void OKButton_Click(object sender, EventArgs e)
+        private void SaveSettingsButton_Click(object sender, EventArgs e)
         {
-            if (CRRadioButton.Checked)
-                Settings.Port.AppendToSend = Settings.Port.AppendType.AppendCR;
-            else if (LFRadioButton.Checked)
-                Settings.Port.AppendToSend = Settings.Port.AppendType.AppendLF;
-            else if (radioButton4.Checked)
-                Settings.Port.AppendToSend = Settings.Port.AppendType.AppendCRLF;
-            else
-                Settings.Port.AppendToSend = Settings.Port.AppendType.AppendNothing;
-
             Settings.Form.Width = int.Parse(FormWidthTextBox.Text);
             Settings.Form.Height = int.Parse(FormHeightTextBox.Text);
+
+                        
             Settings.RichTextBox.WordWrap = WordWrapCheckBox.Checked;
             Settings.RichTextBox.Scroll = ToggleScrollingCheckBox.Checked;
             Settings.RichTextBox.HexOutput = HexOutputCheckBox.Checked;
             Settings.RichTextBox.LocalEcho = LocalEchoCheckBox.Checked;
-      
+            Settings.RichTextBox.AdvancedMode = AdvancedModeCheckBox.Checked;
+
             Settings.WriteXml();
             Close();
         }
@@ -101,16 +99,16 @@ namespace _4Term
             using (ColorDialog colorDialog = new ColorDialog())
             {
                 colorDialog.Color = Color.FromArgb(
-                    Settings.BackColor.R,
-                    Settings.BackColor.G,
-                    Settings.BackColor.B
+                    Settings.Color.Back.R,
+                    Settings.Color.Back.G,
+                    Settings.Color.Back.B
                 );
                 DialogResult result = colorDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    Settings.BackColor.R = colorDialog.Color.R;
-                    Settings.BackColor.G = colorDialog.Color.G;
-                    Settings.BackColor.B = colorDialog.Color.B;
+                    Settings.Color.Back.R = colorDialog.Color.R;
+                    Settings.Color.Back.G = colorDialog.Color.G;
+                    Settings.Color.Back.B = colorDialog.Color.B;
                     Settings.WriteXml();
                 }
             }
@@ -120,16 +118,16 @@ namespace _4Term
             using (ColorDialog colorDialog = new ColorDialog())
             {
                 colorDialog.Color = Color.FromArgb(
-                    Settings.TransmitColor.R,
-                    Settings.TransmitColor.G,
-                    Settings.TransmitColor.B
+                    Settings.Color.Transmit.R,
+                    Settings.Color.Transmit.G,
+                    Settings.Color.Transmit.B
                 );
                 DialogResult result = colorDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    Settings.TransmitColor.R = colorDialog.Color.R;
-                    Settings.TransmitColor.G = colorDialog.Color.G;
-                    Settings.TransmitColor.B = colorDialog.Color.B;
+                    Settings.Color.Transmit.R = colorDialog.Color.R;
+                    Settings.Color.Transmit.G = colorDialog.Color.G;
+                    Settings.Color.Transmit.B = colorDialog.Color.B;
                     Settings.WriteXml();
                 }
             }
@@ -139,21 +137,26 @@ namespace _4Term
             using (ColorDialog colorDialog = new ColorDialog())
             {
                 colorDialog.Color = Color.FromArgb(
-                    Settings.ReceiveColor.R,
-                    Settings.ReceiveColor.G,
-                    Settings.ReceiveColor.B
+                    Settings.Color.Receive.R,
+                    Settings.Color.Receive.G,
+                    Settings.Color.Receive.B
                 );
                 DialogResult result = colorDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    Settings.ReceiveColor.R = colorDialog.Color.R;
-                    Settings.ReceiveColor.G = colorDialog.Color.G;
-                    Settings.ReceiveColor.B = colorDialog.Color.B;
+                    Settings.Color.Receive.R = colorDialog.Color.R;
+                    Settings.Color.Receive.G = colorDialog.Color.G;
+                    Settings.Color.Receive.B = colorDialog.Color.B;
                     Settings.WriteXml();
                 }
             }
         }
-        
+
+        /*----------------------------------------------------------
+         * WndProc
+         * 
+         * Blocks right-clicks on title bar/borders.
+        *---------------------------------------------------------*/
         protected override void WndProc(ref Message buffer)
         {
             if (buffer.Msg == 0xA3)

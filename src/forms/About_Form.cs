@@ -89,7 +89,7 @@ namespace _4Term
             }
         }
         #endregion
-        private void OKButton_Click(object sender, EventArgs e)
+        private void CloseButton_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -101,6 +101,5 @@ namespace _4Term
             }
             base.WndProc(ref buffer);
         }
-
     }
 }
