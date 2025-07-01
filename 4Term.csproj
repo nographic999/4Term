@@ -74,7 +74,6 @@
     <Compile Include="src\forms\About_Form.Designer.cs">
       <DependentUpon>About_Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="src\Font.cs" />
     <Compile Include="src\forms\Main_Form.cs">
       <SubType>Form</SubType>
     </Compile>

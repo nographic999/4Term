@@ -12,6 +12,7 @@ namespace _4Term
         {
             public static int Width = 718;
             public static int Height = 525;
+            public static bool AdvancedMode = false;
         }
 
         public class RichTextBox
@@ -24,8 +25,7 @@ namespace _4Term
             public static bool WordWrap = true;
             public static bool Scroll = true;
             public static bool HexOutput = false;
-            public static bool LocalEcho = true;
-            public static bool AdvancedMode = false;
+            public static bool LocalEcho = true;            
         }
 
         public class Color
@@ -186,6 +186,7 @@ namespace _4Term
             /* Form section */
             Form.Width = Xml.ReadIntParmQ("Form/Width");
             Form.Height = Xml.ReadIntParmQ("Form/Height");
+            Form.AdvancedMode = Xml.ReadBoolParmQ("Form/AdvancedMode");
 
             /* RichTextBox section */
             RichTextBox.Font = Xml.ReadStringParmQ("RichTextBox/Font");
@@ -196,8 +197,7 @@ namespace _4Term
             RichTextBox.WordWrap = Xml.ReadBoolParmQ("RichTextBox/WordWrap");
             RichTextBox.Scroll = Xml.ReadBoolParmQ("RichTextBox/Scroll");
             RichTextBox.HexOutput = Xml.ReadBoolParmQ("RichTextBox/HexOutput");
-            RichTextBox.LocalEcho = Xml.ReadBoolParmQ("RichTextBox/LocalEcho");
-            RichTextBox.AdvancedMode = Xml.ReadBoolParmQ("RichTextBox/AdvancedMode");
+            RichTextBox.LocalEcho = Xml.ReadBoolParmQ("RichTextBox/LocalEcho");            
 
             /* Color section */
             Color.Back.R = Xml.ReadIntParmQ("Back/R");
@@ -238,9 +238,6 @@ namespace _4Term
             {
                 MacroCommand.Text[i] = Xml.ReadStringParmQ($"MacroCommand/Item{i}");
             }
-
-            /* Save and close */
-            //Xml.CloseFileQ();
         }
 
         /*----------------------------------------------------------
@@ -260,6 +257,7 @@ namespace _4Term
             /* Form section */
             Xml.WriteIntParmQ("Form/Width", Form.Width);
             Xml.WriteIntParmQ("Form/Height", Form.Height);
+            Xml.WriteBoolParmQ("Form/AdvancedMode", Form.AdvancedMode);
 
             /* RichTextBox section */
             Xml.WriteStringParmQ("RichTextBox/Font", RichTextBox.Font);
@@ -271,8 +269,7 @@ namespace _4Term
             Xml.WriteBoolParmQ("RichTextBox/Scroll", RichTextBox.Scroll);
             Xml.WriteBoolParmQ("RichTextBox/HexOutput", RichTextBox.HexOutput);
             Xml.WriteBoolParmQ("RichTextBox/LocalEcho", RichTextBox.LocalEcho);
-            Xml.WriteBoolParmQ("RichTextBox/AdvancedMode", RichTextBox.AdvancedMode);
-
+            
             /* Color section */
             Xml.WriteIntParmQ("Back/R", Color.Back.R);
             Xml.WriteIntParmQ("Back/G", Color.Back.G);

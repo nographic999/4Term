@@ -181,11 +181,7 @@ namespace _4Term
          * 
          * Launches a new instance of the current application.
          *---------------------------------------------------------*/
-        private void NewWindowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            /* Start new 4Term window */
-            Process.Start(Process.GetCurrentProcess().ProcessName);
-        }
+        private void NewWindowToolStripMenuItem_Click(object sender, EventArgs e) => Process.Start(Process.GetCurrentProcess().ProcessName);
 
         /*----------------------------------------------------------
          * Separator
@@ -197,11 +193,7 @@ namespace _4Term
          * Toggles the connection state by invoking the same logic 
          * as the Connect button.
          *---------------------------------------------------------*/
-        private void ConnectDisconnectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            /* Call the same logic used by the Connect button */
-            ConnectButton_Click(sender, e);
-        }
+        private void ConnectDisconnectToolStripMenuItem_Click(object sender, EventArgs e) => ConnectButton_Click(sender, e);
 
         /*----------------------------------------------------------
          * ConnectDisconnectToolStripMenuItem_Click
@@ -209,11 +201,7 @@ namespace _4Term
          * Toggles the Auto Connect feature by invoking the same logic 
          * as the Auto Connect button.
          *---------------------------------------------------------*/
-        private void AutoConnectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            /* Call the same logic used by the Auto Connect button */
-            AutoConnectButton_Click(sender, e);
-        }
+        private void AutoConnectToolStripMenuItem_Click(object sender, EventArgs e) => AutoConnectButton_Click(sender, e);
 
         /*----------------------------------------------------------
          * Separator
@@ -486,10 +474,7 @@ namespace _4Term
          * Cleans buffers, closes the COM port properly, 
          * and exits the application.
          *---------------------------------------------------------*/
-        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();
 
         /*----------------------------------------------------------
          * MenuStrip - Edit
@@ -513,10 +498,7 @@ namespace _4Term
          * 
          * Reverts the last change made in the RichTextBox
          *---------------------------------------------------------*/
-        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RichTextBox.Undo();
-        }
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e) => RichTextBox.Undo();
 
         /*----------------------------------------------------------
          * Separator
@@ -528,10 +510,7 @@ namespace _4Term
          * Cuts the selected text from the RichTextBox
          * and places it on the clipboard
          *---------------------------------------------------------*/
-        private void CutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RichTextBox.Cut();
-        }
+        private void CutToolStripMenuItem_Click(object sender, EventArgs e) => RichTextBox.Cut();
 
         /*----------------------------------------------------------
          * CopyToolStripMenuItem_Click
@@ -539,10 +518,7 @@ namespace _4Term
          * Copies the selected text from the RichTextBox
          * to the clipboard
          *---------------------------------------------------------*/
-        private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RichTextBox.Copy();
-        }
+        private void CopyToolStripMenuItem_Click(object sender, EventArgs e) => RichTextBox.Copy();
 
         /*----------------------------------------------------------
          * PasteToolStripMenuItem_Click
@@ -550,20 +526,14 @@ namespace _4Term
          * Pastes the clipboard content into the RichTextBox
          * at the current cursor position
          *---------------------------------------------------------*/
-        private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RichTextBox.Paste();
-        }
-
+        private void PasteToolStripMenuItem_Click(object sender, EventArgs e) => RichTextBox.Paste();
+            
         /*----------------------------------------------------------
          * DeleteToolStripMenuItem_Click
          * 
          * Deletes the selected text from the RichTextBox
          *---------------------------------------------------------*/
-        private void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RichTextBox.SelectedText = "";
-        }
+        private void DeleteToolStripMenuItem_Click(object sender, EventArgs e) => RichTextBox.SelectedText = "";
 
         /*----------------------------------------------------------
          * Separator
@@ -574,10 +544,7 @@ namespace _4Term
          * 
          * Selects all the text in the RichTextBox
          *---------------------------------------------------------*/
-        private void SelectAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RichTextBox.SelectAll();
-        }
+        private void SelectAllToolStripMenuItem_Click(object sender, EventArgs e) => RichTextBox.SelectAll();
 
         /*----------------------------------------------------------
          * Separator
@@ -588,10 +555,7 @@ namespace _4Term
          * 
          * Clears all text from the RichTextBox
          *---------------------------------------------------------*/
-        private void ClearToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RichTextBox.Clear();
-        }
+        private void ClearToolStripMenuItem_Click(object sender, EventArgs e) => RichTextBox.Clear();
 
         /*----------------------------------------------------------
          * MenuStrip - Format
@@ -624,7 +588,39 @@ namespace _4Term
         {
             Settings_Form SettingsForm = new Settings_Form();
             SettingsForm.ShowDialog();
-            SetAdvancedMode(Settings.RichTextBox.AdvancedMode);
+            
+
+            /* Set Form size*/
+            Size = new Size(Settings.Form.Width, Settings.Form.Height);
+
+            /* Set Advanced Mode */
+            SetAdvancedMode(Settings.Form.AdvancedMode);
+
+            /* Set RichTextBox font */
+            FontStyle style = Enum.TryParse(Settings.RichTextBox.FontStyle, out FontStyle parsedStyle)
+                ? parsedStyle
+                : FontStyle.Regular;
+
+            if (Settings.RichTextBox.Underline)
+                style |= FontStyle.Underline;
+
+            if (Settings.RichTextBox.Strikeout)
+                style |= FontStyle.Strikeout;
+
+            RichTextBox.Font = new Font(
+                new FontFamily(Settings.RichTextBox.Font),
+                Settings.RichTextBox.Size,
+                style
+            );
+
+            /* Set Word wrap */
+            RichTextBox.WordWrap = WordWrapToolStripMenuItem.Checked = Settings.RichTextBox.WordWrap;
+
+            /* Set Toggle scrolling */
+            ToggleScrollingToolStripMenuItem.Checked = Settings.RichTextBox.Scroll;
+
+            /* Set RichTextBox background color */
+            RichTextBox.BackColor = Color.FromArgb(Settings.Color.Back.R, Settings.Color.Back.G, Settings.Color.Back.B);
         }
 
         /*----------------------------------------------------------
@@ -634,6 +630,7 @@ namespace _4Term
          *
          * [✓] ToggleScrollingToolStripMenuItem_Click
          * [✓] MacroModeToolStripMenuItem_Click
+         * [✓] AdvancedModeToolStripMenuItem_Click
          *---------------------------------------------------------*/
 
         /*----------------------------------------------------------
@@ -665,22 +662,19 @@ namespace _4Term
             MacroEditingFlag = !MacroEditingFlag;
             SetMacroSetMode(MacroEditingFlag);
         }
-/*
-        private void MacroRepeatToolStripMenuItem_Click(object sender, EventArgs e)
+
+        /*----------------------------------------------------------
+         * AdvancedModeToolStripMenuItem_Click
+         * 
+         * Toggles the Advanced Mode option when clicked,
+         * updates the UI accordingly, and saves the setting.
+         *---------------------------------------------------------*/
+        private void AdvancedModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MacroRepeatTimer.Enabled)
-            {
-                MacroRepeatToolStripMenuItem.Checked = false;
-                MacroRepeatTimer.Enabled = false;
-            }
-            else
-            {
-                MacroRepeatFlag = true;
-                MacroRepeatToolStripMenuItem.Checked = true;
-                RichTextBox.SelectionColor = Color.IndianRed;
-                RichTextBox.AppendText("Press any macro button to repeat\n");
-            }
-        }*/
+            AdvancedModeToolStripMenuItem.Checked = !AdvancedModeToolStripMenuItem.Checked;
+            SetAdvancedMode(AdvancedModeToolStripMenuItem.Checked);
+            Settings.WriteXml();
+        }
 
         /*----------------------------------------------------------
          * MenuStrip - Help
@@ -702,246 +696,258 @@ namespace _4Term
             AboutForm.ShowDialog();
         }
 
-        private void M1SetToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!M2Flag && !M3Flag && !M4Flag && !M5Flag)
-            {
-                M1ToolStripMenuItem.BackColor = Color.Yellow;
-                M1Flag = true;
-                InfoMessage("Please Select macro\n");
-            }
-        }
+        /*----------------------------------------------------------
+         * MenuStrip - DTR
+         *---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         *
+         * [✓] DtrToolStripMenuItem_MouseDown
+         *---------------------------------------------------------*/
 
-        private void M2SetToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!M1Flag && !M3Flag && !M4Flag && !M5Flag)
-            {
-                M2ToolStripMenuItem.BackColor = Color.Yellow;
-                M2Flag = true;
-                InfoMessage("Please Select macro\n");
-            }
-        }
-
-        private void M3SetToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!M1Flag && !M2Flag && !M4Flag && !M5Flag)
-            {
-                M3ToolStripMenuItem.BackColor = Color.Yellow;
-                M3Flag = true;
-                InfoMessage("Please Select macro\n");
-            }
-        }
-
-        private void M4SetToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!M1Flag && !M2Flag && !M3Flag && !M5Flag)
-            {
-                M4ToolStripMenuItem.BackColor = Color.Yellow;
-                M4Flag = true;
-                InfoMessage("Please Select macro\n");
-            
-      
-            }
-        }
-
-        private void M5SetToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!M1Flag && !M2Flag && !M3Flag && !M4Flag)
-            {
-                M5ToolStripMenuItem.BackColor = Color.Yellow;
-                M5Flag = true;
-                InfoMessage("Please Select macro\n");
-            }
-        }
-
-        private void AdvancedModeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AdvancedModeToolStripMenuItem.Checked = !AdvancedModeToolStripMenuItem.Checked;
-            SetAdvancedMode(AdvancedModeToolStripMenuItem.Checked);
-            Settings.WriteXml();
-        }
-
-        private void M1ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                if (Port.IsOpen && (CurrentM1Repeat != -1))
-                {
-                    if (!M1Timer.Enabled)
-                    {
-
-                        if (int.TryParse(M1ToolStripTextBox.Text, out int interval) && interval > 0)
-                        {
-                            
-                            M1Timer.Interval = interval;
-                            M1Timer.Enabled = true;
-                        }
-                        else
-                        {
-                            RichTextBox.SelectionColor = Color.IndianRed;
-                            RichTextBox.AppendText("Please enter a valid positive number.\n");
-                        }
-                    }
-                    else
-                    {
-                        M1Timer.Enabled = false;
-                        M1ToolStripMenuItem.BackColor = SystemColors.Control;
-                    }
-                }
-                else
-                    RichTextBox.AppendText("COM port is not open.\n");
-            }
-        }
-
-        private void M2ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                if (Port.IsOpen && (CurrentM2Repeat != -1))
-                {
-                    if (!M2Timer.Enabled)
-                    {
-
-                        if (int.TryParse(M2ToolStripTextBox.Text, out int interval) && interval > 0)
-                        {
-                            M2ToolStripMenuItem.BackColor = Color.Green;
-                            M2Timer.Interval = interval;
-                            M2Timer.Enabled = true;
-                        }
-                        else
-                        {
-                            RichTextBox.SelectionColor = Color.IndianRed;
-                            RichTextBox.AppendText("Please enter a valid positive number.\n");
-                        }
-                    }
-                    else
-                    {
-                        M2Timer.Enabled = false;
-                        M2ToolStripMenuItem.BackColor = SystemColors.Control;
-                    }
-                }
-                else
-                    RichTextBox.AppendText("COM port is not open.\n");
-            }
-        }
-
-        private void M3ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                if (Port.IsOpen && (CurrentM3Repeat != -1))
-                {
-                    if (!M3Timer.Enabled)
-                    {
-
-                        if (int.TryParse(M3ToolStripTextBox.Text, out int interval) && interval > 0)
-                        {
-                            M3ToolStripMenuItem.BackColor = Color.Green;
-                            M3Timer.Interval = interval;
-                            M3Timer.Enabled = true;
-                        }
-                        else
-                        {
-                            RichTextBox.SelectionColor = Color.IndianRed;
-                            RichTextBox.AppendText("Please enter a valid positive number.\n");
-                        }
-                    }
-                    else
-                    {
-                        M3Timer.Enabled = false;
-                        M3ToolStripMenuItem.BackColor = SystemColors.Control;
-                    }
-                }
-                else
-                    RichTextBox.AppendText("COM port is not open.\n");
-            }
-        }
-
-        private void M4ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                if (Port.IsOpen && (CurrentM4Repeat != -1))
-                {
-                    if (!M4Timer.Enabled)
-                    {
-                        if (int.TryParse(M4ToolStripTextBox.Text, out int interval) && interval > 0)
-                        {
-                            M4ToolStripMenuItem.BackColor = Color.Green;
-                            M4Timer.Interval = interval;
-                            M4Timer.Enabled = true;
-                        }
-                        else
-                        {
-                            RichTextBox.SelectionColor = Color.IndianRed;
-                            RichTextBox.AppendText("Please enter a valid positive number.\n");
-                        }
-                    }
-                    else
-                    {
-                        M4Timer.Enabled = false;
-                        M4ToolStripMenuItem.BackColor = SystemColors.Control;
-                    }
-                }
-                else
-                    RichTextBox.AppendText("COM port is not open.\n");
-            }
-        }
-
-        private void M5ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                if (Port.IsOpen && (CurrentM5Repeat != -1))
-                {
-                    if (!M5Timer.Enabled)
-                    {
-                        if (int.TryParse(M5ToolStripTextBox.Text, out int interval) && interval > 0)
-                        {
-                            M5ToolStripMenuItem.BackColor = Color.Green;
-                            M5Timer.Interval = interval;
-                            M5Timer.Enabled = true;
-                        }
-                        else
-                        {
-                            RichTextBox.SelectionColor = Color.IndianRed;
-                            RichTextBox.AppendText("Please enter a valid positive number.\n");
-                        }
-                    }
-                    else
-                    {
-                        M5Timer.Enabled = false;
-                        M5ToolStripMenuItem.BackColor = SystemColors.Control;
-                    }
-                }
-                else
-                    RichTextBox.AppendText("COM port is not open.\n");
-            }
-        }
-
+        /*----------------------------------------------------------
+         * DtrToolStripMenuItem_MouseDown
+         * 
+         * Toggles the DTR (Data Terminal Ready) signal setting on right-click.
+         * Updates the menu item color to indicate status and applies the setting
+         * to the serial port if open. Saves the updated settings.
+         *---------------------------------------------------------*/
         private void DtrToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
                 Settings.Port.Dtr = !Settings.Port.Dtr;
                 DtrToolStripMenuItem.BackColor = Settings.Port.Dtr ? Color.Green : SystemColors.Control;
+
                 if (Serial.Instance.IsOpen)
                     Serial.Instance.SetDtr(Settings.Port.Dtr);
+
                 Settings.WriteXml();
             }
         }
 
+        /*----------------------------------------------------------
+         * MenuStrip - RTS
+         *---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         *
+         * [✓]  RtsToolStripMenuItem_MouseDown
+         *---------------------------------------------------------*/
+
+        /*----------------------------------------------------------
+         * RtsToolStripMenuItem_MouseDown
+         * 
+         * Toggles the RTS (Request To Send) signal setting on right-click.
+         * Updates the menu item color to indicate status and applies the setting
+         * to the serial port if open. Saves the updated settings.
+         *---------------------------------------------------------*/
         private void RtsToolStripMenuItem_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
                 Settings.Port.Rts = !Settings.Port.Rts;
                 RtsToolStripMenuItem.BackColor = Settings.Port.Rts ? Color.Green : SystemColors.Control;
+
                 if (Serial.Instance.IsOpen)
                     Serial.Instance.SetRts(Settings.Port.Rts);
+
                 Settings.WriteXml();
             }
         }
 
+        /*----------------------------------------------------------
+         * MenuStrip - M1
+         *---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         *
+         * [✓] M1ToolStripMenuItem_MouseDown
+         * [✓] M1SetToolStripMenuItem_Click
+         *---------------------------------------------------------*/
+
+        /*----------------------------------------------------------
+         * M1ToolStripMenuItem_MouseDown
+         * 
+         * Handles right-click events on the M1 macro menu item,
+         * toggling the macro timer based on user input interval.
+         *---------------------------------------------------------*/
+        private void M1ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e) => HandleMacroMouseDown(0, M1ToolStripMenuItem, M1ToolStripTextBox, e);
+
+        /*----------------------------------------------------------
+         * M1SetToolStripMenuItem_Click
+         * 
+         * Sets the M1 macro configuration when the set menu item
+         * is clicked by delegating to the SetMMacro helper method.
+         *---------------------------------------------------------*/
+        private void M1SetToolStripMenuItem_Click(object sender, EventArgs e) => SetMMacro(0, M1ToolStripMenuItem);
+
+        /*----------------------------------------------------------
+         * MenuStrip - M2
+         *---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         *
+         * [✓] M2ToolStripMenuItem_MouseDown
+         * [✓] M2SetToolStripMenuItem_Click
+         *---------------------------------------------------------*/
+
+        /*----------------------------------------------------------
+         * M2ToolStripMenuItem_MouseDown
+         * 
+         * Handles right-click events on the M2 macro menu item,
+         * toggling the macro timer based on user input interval.
+         *---------------------------------------------------------*/
+        private void M2ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e) => HandleMacroMouseDown(1, M2ToolStripMenuItem, M2ToolStripTextBox, e);
+
+        /*----------------------------------------------------------
+         * M2SetToolStripMenuItem_Click
+         * 
+         * Sets the M2 macro configuration when the set menu item
+         * is clicked by delegating to the SetMMacro helper method.
+         *---------------------------------------------------------*/
+        private void M2SetToolStripMenuItem_Click(object sender, EventArgs e) => SetMMacro(1, M2ToolStripMenuItem);
+
+        /*----------------------------------------------------------
+         * MenuStrip - M3
+         *---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         *
+         * [✓] M3ToolStripMenuItem_MouseDown
+         * [✓] M3SetToolStripMenuItem_Click
+         *---------------------------------------------------------*/
+
+        /*----------------------------------------------------------
+         * M3ToolStripMenuItem_MouseDown
+         * 
+         * Handles right-click events on the M3 macro menu item,
+         * toggling the macro timer based on user input interval.
+         *---------------------------------------------------------*/
+        private void M3ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e) => HandleMacroMouseDown(2, M3ToolStripMenuItem, M3ToolStripTextBox, e);
+
+        /*----------------------------------------------------------
+         * M3SetToolStripMenuItem_Click
+         * 
+         * Sets the M3 macro configuration when the set menu item
+         * is clicked by delegating to the SetMMacro helper method.
+         *---------------------------------------------------------*/
+        private void M3SetToolStripMenuItem_Click(object sender, EventArgs e) => SetMMacro(2, M3ToolStripMenuItem);
+
+
+        /*----------------------------------------------------------
+         * MenuStrip - M4
+         *---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         *
+         * [✓] M4ToolStripMenuItem_MouseDown
+         * [✓] M4SetToolStripMenuItem_Click
+         *---------------------------------------------------------*/
+
+        /*----------------------------------------------------------
+         * M4ToolStripMenuItem_MouseDown
+         * 
+         * Handles right-click events on the M4 macro menu item,
+         * toggling the macro timer based on user input interval.
+         *---------------------------------------------------------*/
+        private void M4ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e) => HandleMacroMouseDown(3, M4ToolStripMenuItem, M4ToolStripTextBox, e);
+
+        /*----------------------------------------------------------
+         * M4SetToolStripMenuItem_Click
+         * 
+         * Sets the M4 macro configuration when the set menu item
+         * is clicked by delegating to the SetMMacro helper method.
+         *---------------------------------------------------------*/
+        private void M4SetToolStripMenuItem_Click(object sender, EventArgs e) => SetMMacro(3, M4ToolStripMenuItem);
+
+
+        /*----------------------------------------------------------
+         * MenuStrip - M5
+         *---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         *
+         * [✓] M5ToolStripMenuItem_MouseDown
+         * [✓] M5SetToolStripMenuItem_Click
+         *---------------------------------------------------------*/
+
+        /*----------------------------------------------------------
+         * M5ToolStripMenuItem_MouseDown
+         * 
+         * Handles right-click events on the M5 macro menu item,
+         * toggling the macro timer based on user input interval.
+         *---------------------------------------------------------*/
+        private void M5ToolStripMenuItem_MouseDown(object sender, MouseEventArgs e) => HandleMacroMouseDown(4, M5ToolStripMenuItem, M5ToolStripTextBox, e);
+
+        /*----------------------------------------------------------
+         * M5SetToolStripMenuItem_Click
+         * 
+         * Sets the M5 macro configuration when the set menu item
+         * is clicked by delegating to the SetMMacro helper method.
+         *---------------------------------------------------------*/
+        private void M5SetToolStripMenuItem_Click(object sender, EventArgs e) => SetMMacro(4, M5ToolStripMenuItem);
+
+        /*----------------------------------------------------------
+         * Helper Functions
+         * ---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         * 
+         * [✓] SetMMacro
+         * [✓] HandleMacroMouseDown
+         *---------------------------------------------------------*/
+
+        /*----------------------------------------------------------
+         * SetMMacro
+         * 
+         * Activates the macro selection mode for the specified
+         * macro index if no other macros are currently flagged.
+         * Changes the menu item's background color to yellow
+         * and displays an informational message.
+         *---------------------------------------------------------*/
+        private void SetMMacro(int index, ToolStripMenuItem menuItem)
+        {
+            if (MFlag.Where((flag, i) => i != index).All(flag => !flag))
+            {
+                menuItem.BackColor = Color.Yellow;
+                MFlag[index] = true;
+                InfoMessage("Please Select macro\n");
+            }
+        }
+
+        /*----------------------------------------------------------
+         * HandleMacroMouseDown
+         * 
+         * Handles right-click events on macro menu items.
+         * - Checks if the COM port is open and macro is valid.
+         * - Parses interval input and toggles the corresponding
+         *   timer's enabled state and interval.
+         * - Updates the menu item's background color accordingly.
+         * - Displays error messages for invalid inputs or port state.
+         *---------------------------------------------------------*/
+        private void HandleMacroMouseDown(int index, ToolStripMenuItem menuItem, ToolStripTextBox textBox, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            if (!Port.IsOpen || CurrentMRepeat[index] == -1)
+            {
+                RichTextBox.AppendText("COM port is not open.\n");
+                return;
+            }
+
+            if (!MTimer[index].Enabled)
+            {
+                if (int.TryParse(textBox.Text, out int interval) && interval > 0)
+                {
+                    MTimer[index].Interval = interval;
+                    MTimer[index].Enabled = true;
+                    menuItem.BackColor = Color.Green;
+                }
+                else
+                {
+                    RichTextBox.SelectionColor = Color.IndianRed;
+                    RichTextBox.AppendText("Please enter a valid positive number.\n");
+                }
+            }
+            else
+            {
+                MTimer[index].Enabled = false;
+                menuItem.BackColor = SystemColors.Control;
+            }
+        }
     }
 }

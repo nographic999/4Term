@@ -18,7 +18,6 @@ namespace _4Term
          * [✓] BaudRateRadioButton_Click
          * [✓] BaudRateCustomRadioButton_Click
          * [✓] SaveSettings_Click
-         * [✓] WndProc
          *---------------------------------------------------------*/
 
         /*----------------------------------------------------------
@@ -279,19 +278,22 @@ namespace _4Term
         }
 
         /*----------------------------------------------------------
+         * Helper Functions
+         * ---------------------------------------------------------
+         * DEVELOPMENT STATUS
+         * 
+         * [✓] WndProc
+         *---------------------------------------------------------*/
+
+        /*----------------------------------------------------------
          * WndProc
          * 
          * Blocks right-clicks on title bar/borders.
         *---------------------------------------------------------*/
         protected override void WndProc(ref Message buffer)
         {
-            if (buffer.Msg == 0xA3)
-            {
-                return;
-            }
-            base.WndProc(ref buffer);
+            if (buffer.Msg != 0xA3)
+                base.WndProc(ref buffer);
         }
-
-        
     }
 }

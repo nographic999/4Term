@@ -21,7 +21,17 @@ All notable changes to **4Term** will be documented in this file.
  - XML file handling
  - Serial port handling
  - Settings handling
+
+## [1.2.0] - 2025-06-24
  
+### Changed
+ - Removed unused code and redundant comments
+ - Refactored functions for better readability and efficiency
+ - Simplified assembly attribute accessors with helper methods
+ - Improved naming conventions and consistent formatting
+ - Updated comments for clarity and better documentation
+ - Removed deprecated methods and fixed minor bugs
+
 ## License
 
 This project is licensed under the [MIT License](./LICENSE).

@@ -5,6 +5,12 @@ namespace _4Term
 {
      static class Program
     {
+        /*----------------------------------------------------------
+         * Main
+         * 
+         * The application's entry point.
+         * Initializes application visual styles and runs the main form.
+         *---------------------------------------------------------*/
         [STAThread]
         static void Main()
         {
