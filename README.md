@@ -10,9 +10,9 @@ It's especially useful for capturing, analyzing, and debugging data from serial 
 ## Download
 
 **Latest Release**  
-**Version:** `1.2.0-beta`  
-**Architecture:** `x86_64`  
-**Binary:** [Download 4Term 1.2.0-beta x86_64.7z](./4Term_1.2.0-beta_x86_64.7z)
+**Version:** `1.3.0-beta`  
+**Architecture:** `x64`  
+**Binary:** [Download 4Term 1.3.0-beta x64.7z](./4Term_1.3.0-beta_x64.7z)
 
 ---
 

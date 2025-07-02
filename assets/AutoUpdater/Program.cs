@@ -94,9 +94,9 @@ class Program
     static async Task DownloadFileAsync(string url, string destinationPath)
     {
         /* Print header with separators */
-        Console.WriteLine(new string('-', 79));
+        Console.WriteLine(new string('-', 100));
         Console.WriteLine($"Downloading file: {destinationPath}");
-        Console.WriteLine(new string('-', 79));
+        Console.WriteLine(new string('-', 100));
 
         /* Create HttpClient for downloading */
         using (HttpClient client = new HttpClient())
@@ -169,33 +169,33 @@ class Program
     }
 
     /*----------------------------------------------------------
-     * ExtractWith7zaExe
+     * ExtractWith7zDecExe
      * 
-     * Extracts the specified archive using 7za.exe located
+     * Extracts the specified archive using 7zDec.exe located
      * in the application base directory. Displays extraction
      * progress and errors in real time.
      *---------------------------------------------------------*/
-    static bool ExtractWith7zaExe(string archivePath)
+    static bool ExtractWith7zDecExe(string archivePath)
     {
-        /* Get the full path to 7za.exe in the application directory */
-        string sevenZipExe = Path.Combine(AppContext.BaseDirectory, "7za.exe");
+        /* Get the full path to 7zDec.exe in the application directory */
+        string sevenZipDecExe = Path.Combine(AppContext.BaseDirectory, "7zDec.exe");
 
-        /* Check if 7za.exe exists */
-        if (!File.Exists(sevenZipExe))
+        /* Check if 7zDec.exe exists */
+        if (!File.Exists(sevenZipDecExe))
         {
-            Console.WriteLine("Missing: 7za.exe");
+            Console.WriteLine("Missing: 7zDec.exe");
             return false;
         }
 
-        /* Setup ProcessStartInfo to run 7za.exe with arguments */
+        /* Setup ProcessStartInfo to run 7zDec.exe with arguments */
         var psi = new ProcessStartInfo
         {
-            FileName = sevenZipExe,
-            Arguments = $"x \"{archivePath}\" -y",    /* Extract archive with automatic yes to all prompts */
-            RedirectStandardOutput = true,            /* Redirect stdout so we can capture output */
-            RedirectStandardError = true,             /* Redirect stderr to capture errors */
-            UseShellExecute = false,                   /* Required to redirect streams */
-            CreateNoWindow = true                      /* Do not create a console window */
+            FileName = sevenZipDecExe,
+            Arguments = $"x \"{archivePath}\"",        /* Extract archive with full paths */
+            RedirectStandardOutput = true,             /* Redirect stdout to capture output */
+            RedirectStandardError = true,              /* Redirect stderr to capture errors */
+            UseShellExecute = false,                    /* Required for redirection */
+            CreateNoWindow = true                       /* Do not create a console window */
         };
 
         try
@@ -205,18 +205,18 @@ class Program
             {
                 if (process == null)
                 {
-                    Console.WriteLine("Could not start 7za process.");
+                    Console.WriteLine("Could not start 7zDec process.");
                     return false;
                 }
 
-                /* Hook up event handler to capture standard output asynchronously */
+                /* Capture and print standard output asynchronously */
                 process.OutputDataReceived += (sender, e) =>
                 {
                     if (!string.IsNullOrEmpty(e.Data))
                         Console.WriteLine(e.Data);
                 };
 
-                /* Hook up event handler to capture standard error asynchronously */
+                /* Capture and print standard error asynchronously */
                 process.ErrorDataReceived += (sender, e) =>
                 {
                     if (!string.IsNullOrEmpty(e.Data))
@@ -227,7 +227,7 @@ class Program
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
 
-                /* Wait for extraction process to finish */
+                /* Wait for the extraction process to finish */
                 process.WaitForExit();
 
                 /* Check exit code to determine success */
@@ -237,35 +237,68 @@ class Program
                     return true;
                 }
 
-                Console.WriteLine($"7za failed (exit code {process.ExitCode})");
+                Console.WriteLine($"7zDec failed (exit code {process.ExitCode})");
                 return false;
             }
         }
         catch (Exception ex)
         {
-            /* Handle any exceptions during process start or execution */
+            /* Handle exceptions during process start or execution */
             Console.WriteLine("Extraction error: " + ex.Message);
             return false;
         }
     }
 
+
     /*----------------------------------------------------------
-     * PrintAppInfo
+     * WelcomeMsg
      * 
-     * Displays application title and version information
-     * to the console with colored text.
+     * Displays the ASCII art title and version information for
+     * the 4Term Auto-Updater. Each line of the banner is printed
+     * with a rotating console text color for visual emphasis.
      *---------------------------------------------------------*/
-    static void PrintAppInfo()
+    static void WelcomeMsg()
     {
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("=== 4Term AutoUpdater ===");
-        Console.ResetColor();
+        /* ASCII art banner representing the application */
+        string[] asciiLines = new string[]
+            {
+                "                                Launching 4Term Auto-Updater...",
+                "  ____________/\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\__________________________________________________",
+                "   __________/\\\\\\\\\\____\\///////\\\\\\/////___________________________________________________",
+                "    ________/\\\\\\/\\\\\\__________\\/\\\\\\________________________________________________________",
+                "     ______/\\\\\\/\\/\\\\\\__________\\/\\\\\\___________/\\\\\\\\\\\\\\\\___/\\\\/\\\\\\\\\\\\\\_____/\\\\\\\\\\__/\\\\\\\\\\___",
+                "      ____/\\\\\\/__\\/\\\\\\__________\\/\\\\\\_________/\\\\\\/////\\\\\\_\\/\\\\\\/////\\\\\\__/\\\\\\///\\\\\\\\\\///\\\\\\_",
+                "       __/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_______\\/\\\\\\________/\\\\\\\\\\\\\\\\\\\\\\__\\/\\\\\\___\\///__\\/\\\\\\_\\//\\\\\\__\\/\\\\\\_",
+                "        _\\///////////\\\\\\//________\\/\\\\\\_______\\//\\\\///////___\\/\\\\\\_________\\/\\\\\\__\\/\\\\\\__\\/\\\\\\_",
+                "         ___________\\/\\\\\\__________\\/\\\\\\________\\//\\\\\\\\\\\\\\\\\\\\_\\/\\\\\\_________\\/\\\\\\__\\/\\\\\\__\\/\\\\\\_",
+                "          ___________\\///___________\\///__________\\//////////__\\///__________\\///___\\///___\\///__",
+                "                                                                           Version: 1.0.1-beta x64\n"
+            };
 
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("Version: 1.0.0-alpha (x64)");
-        Console.ResetColor();
+        /* Array of colors used to cycle through for each line */
+        ConsoleColor[] colors = new ConsoleColor[]
+        {
+            ConsoleColor.Blue,
+            ConsoleColor.Magenta,
+            ConsoleColor.DarkCyan,
+            ConsoleColor.DarkRed,
+            ConsoleColor.DarkMagenta,
+            ConsoleColor.Red,
+            ConsoleColor.DarkYellow,
+            ConsoleColor.Yellow,
+            ConsoleColor.Green,
+            ConsoleColor.Cyan
+        };
 
-        Console.WriteLine();
+        /* Print each line of the banner with a rotating color */
+        for (int i = 0; i < asciiLines.Length; i++)
+        {
+            Console.ForegroundColor = colors[i % colors.Length];
+            Console.WriteLine(asciiLines[i]);
+        }
+
+        /* Reset the console text color to default */
+        Console.ResetColor();
     }
 
     const string versionFile = "version.txt";
@@ -285,14 +318,18 @@ class Program
      * - Downloads and extracts update files if a new version is found.
      * - Reports status messages throughout the process.
      *---------------------------------------------------------*/
-    static int Main()
+        static int Main()
     {
         /* Show program welcome message */
-        PrintAppInfo();
+        WelcomeMsg();
+
+        Console.WriteLine(new string('-', 100));
 
         /* Check if internet connection is available */
         if (!CheckGitHubConnection())
             return 1;
+
+        Console.WriteLine(new string('-', 100));
 
         /* Check if version file exist */
         if (File.Exists(versionFile))
@@ -307,37 +344,42 @@ class Program
             Console.WriteLine($"{versionFile} missing, downloading...");
         }
 
+        Console.WriteLine(new string('-', 100));
+
         /* Read and show version file content */
-        
+
         Console.WriteLine($"Version content: {versionContent}");
 
         /* Get and show remote version */
         remoteVersion = GetRemoteVersionAsync(GitHubUrl + versionFile).GetAwaiter().GetResult();
         Console.WriteLine($"Remote version: {remoteVersion}");
 
+        Console.WriteLine(new string('-', 100));
+
         /* Simple string match */
         if (versionContent == remoteVersion)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Local version is up to date.");
-            Console.ResetColor();        
+            Console.ResetColor();
+            Console.WriteLine(new string('-', 100));
         }
         else
         {
             Console.WriteLine("New version detected. Downloading update files...");
             DownloadFileAsync(GitHubUrl + remoteVersion, remoteVersion).GetAwaiter().GetResult();
             DownloadFileAsync(GitHubUrl + versionFile, versionFile).GetAwaiter().GetResult();
-            Console.WriteLine(new string('-', 79));
+            Console.WriteLine(new string('-', 100));
             Console.WriteLine("Update files downloaded successfully.");
-            Console.WriteLine(new string('-', 79));
+            Console.WriteLine(new string('-', 100));
 
-            if (!ExtractWith7zaExe(remoteVersion))
+            if (!ExtractWith7zDecExe(remoteVersion))
                 return 1;
-            Console.WriteLine(new string('-', 79));
+            Console.WriteLine(new string('-', 100));
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Application updated successfully.");
             Console.ResetColor();
-            Console.WriteLine(new string('-', 79));
+            Console.WriteLine(new string('-', 100));
             File.Delete(remoteVersion);
         }
         return 0;
