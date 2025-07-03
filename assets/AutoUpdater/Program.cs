@@ -272,7 +272,7 @@ class Program
                 "        _\\///////////\\\\\\//________\\/\\\\\\_______\\//\\\\///////___\\/\\\\\\_________\\/\\\\\\__\\/\\\\\\__\\/\\\\\\_",
                 "         ___________\\/\\\\\\__________\\/\\\\\\________\\//\\\\\\\\\\\\\\\\\\\\_\\/\\\\\\_________\\/\\\\\\__\\/\\\\\\__\\/\\\\\\_",
                 "          ___________\\///___________\\///__________\\//////////__\\///__________\\///___\\///___\\///__",
-                "                                                                           Version: 1.0.1-beta x64\n"
+                "                                                                           Version: 1.0.2-beta x64\n"
             };
 
         /* Array of colors used to cycle through for each line */
@@ -351,7 +351,7 @@ class Program
         Console.WriteLine($"Version content: {versionContent}");
 
         /* Get and show remote version */
-        remoteVersion = GetRemoteVersionAsync(GitHubUrl + versionFile).GetAwaiter().GetResult();
+        remoteVersion = GetRemoteVersionAsync(GitHubUrl +  versionFile).GetAwaiter().GetResult();
         Console.WriteLine($"Remote version: {remoteVersion}");
 
         Console.WriteLine(new string('-', 100));
@@ -368,7 +368,10 @@ class Program
         {
             Console.WriteLine("New version detected. Downloading update files...");
             DownloadFileAsync(GitHubUrl + remoteVersion, remoteVersion).GetAwaiter().GetResult();
-            DownloadFileAsync(GitHubUrl + versionFile, versionFile).GetAwaiter().GetResult();
+            DownloadFileAsync(GitHubUrl + "assets/7zdec.exe", "7zdec.exe").GetAwaiter().GetResult();
+            DownloadFileAsync(GitHubUrl + "assets/setup.bat", "setup.bat").GetAwaiter().GetResult();
+            
+
             Console.WriteLine(new string('-', 100));
             Console.WriteLine("Update files downloaded successfully.");
             Console.WriteLine(new string('-', 100));
@@ -380,7 +383,20 @@ class Program
             Console.WriteLine("Application updated successfully.");
             Console.ResetColor();
             Console.WriteLine(new string('-', 100));
+            File.Delete("7zdec.exe");
             File.Delete(remoteVersion);
+            // Path to your batch file
+            string batFilePath = @"setup.bat";
+
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = batFilePath;
+            psi.UseShellExecute = true; // Important for batch files
+            psi.CreateNoWindow = false; // Show the command window if you want
+
+            Process.Start(psi);
+            
+            // Quit the C# program immediately after starting the batch
+            Environment.Exit(0);
         }
         return 0;
     }
